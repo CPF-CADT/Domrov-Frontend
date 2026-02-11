@@ -5,11 +5,15 @@ import type { Term } from "@/components/dashboard/types";
 interface DashboardHeaderProps {
   activeTerm: Term;
   onChangeTerm: (term: Term) => void;
+  onCreateClass?: () => void;
+  onJoinClass?: () => void;
 }
 
 export default function DashboardHeader({
   activeTerm,
   onChangeTerm,
+  onCreateClass,
+  onJoinClass,
 }: DashboardHeaderProps) {
   return (
     <header className="bg-primary text-white px-6 py-4 flex items-center justify-between">
@@ -37,10 +41,16 @@ export default function DashboardHeader({
             <option value="Term3">Term3</option>
           </select>
         </div>
-        <button className="px-4 py-2 bg-white text-primary font-semibold rounded-md shadow-sm hover:bg-blue-50">
+        <button
+          className="px-4 py-2 bg-white text-primary font-semibold rounded-md shadow-sm hover:bg-blue-50"
+          onClick={onCreateClass}
+        >
           + Create Class
         </button>
-        <button className="px-4 py-2 bg-white text-primary font-semibold rounded-md shadow-sm hover:bg-blue-50">
+        <button
+          className="px-4 py-2 bg-white text-primary font-semibold rounded-md shadow-sm hover:bg-blue-50"
+          onClick={onJoinClass}
+        >
           + Join Class
         </button>
         <div className="flex items-center space-x-3">

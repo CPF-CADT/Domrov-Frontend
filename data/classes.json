@@ -14,5 +14,21 @@
     "term": "Term2",
     "accent": "#111827",
     "gradient": "from-slate-900 via-slate-800 to-slate-600"
+  },
+  {
+    "class_id": 1770825177825,
+    "id": "1770825177825",
+    "name": "Java Programming",
+    "group": "G3",
+    "generation": "Gen 10",
+    "description": "",
+    "join_code": "YG87XB",
+    "owner_id": 1,
+    "cover_image_url": "",
+    "status": "active",
+    "track": "G3",
+    "term": "Term1",
+    "accent": "#111827",
+    "gradient": "from-slate-900 via-slate-800 to-slate-600"
   }
 ]

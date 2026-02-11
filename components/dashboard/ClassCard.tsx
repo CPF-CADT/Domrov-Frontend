@@ -18,7 +18,7 @@ export default function ClassCard({ classItem, onOpen }: ClassCardProps) {
     <article className="card-surface">
       <CardHeaderGradient
         gradientClass={classItem.gradient}
-        label={classItem.track}
+        label={classItem.name}
       />
 
       <div className="p-4">
