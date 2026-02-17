@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import ClassGrid from "@/components/dashboard/ClassGrid";
 import Sidebar from "@/components/dashboard/Sidebar";
@@ -30,11 +31,6 @@ const sidebarItems = [
   { id: "lock", label: "Lock", icon: LockIcon },
 ];
 
-// --- Helpers ---
-const handleOpen = (id: string) => {
-  console.log(`Open class ${id}`);
-};
-
 import { CLASS_GRADIENTS, CLASS_ACCENT_COLORS } from "@/constants/class";
 
 const generateUniqueId = () => {
@@ -46,6 +42,8 @@ const generateUniqueId = () => {
  * Displays sidebar navigation, header with filters, and class grid.
  */
 export default function DashboardPage() {
+  const router = useRouter();
+  
   // Load classes from API on mount so we use persisted + volatile combined state
   const [classList, setClassList] = useState<ClassCard[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -71,6 +69,11 @@ export default function DashboardPage() {
     useDashboardFilters(classList);
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  // Navigate to class dashboard when a class card is clicked
+  const handleOpen = (id: string) => {
+    router.push(`/class/${id}`);
+  };
 
   const handleJoinClass = (code: string) => {
     // Find class by join_code in classList

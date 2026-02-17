@@ -1,3 +1,6 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import CardFooterActions from "@/components/ui/CardFooterActions";
 import CardHeaderGradient from "@/components/ui/CardHeaderGradient";
 import type { ClassCard as ClassCardType } from "./types";
@@ -12,10 +15,22 @@ interface ClassCardProps {
  * Uses card-surface styling for consistent card appearance.
  */
 export default function ClassCard({ classItem, onOpen }: ClassCardProps) {
-  const handleOpen = () => onOpen?.(classItem.id);
+  const router = useRouter();
+  
+  const handleOpen = () => {
+    if (onOpen) {
+      onOpen(classItem.id);
+    } else {
+      // Navigate to class dashboard page
+      router.push(`/class/${classItem.id}`);
+    }
+  };
 
   return (
-    <article className="card-surface">
+    <article 
+      className="card-surface cursor-pointer hover:shadow-lg transition-shadow"
+      onClick={handleOpen}
+    >
       <CardHeaderGradient
         gradientClass={classItem.gradient}
         label={classItem.name}
@@ -27,7 +42,7 @@ export default function ClassCard({ classItem, onOpen }: ClassCardProps) {
           {classItem.name}
         </h3>
 
-        <CardFooterActions accent={classItem.accent} onOpen={handleOpen} />
+        <CardFooterActions accent={classItem.accent} onOpen={undefined} />
       </div>
     </article>
   );
