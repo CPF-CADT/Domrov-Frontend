@@ -13,7 +13,6 @@ import {
   FilesTab,
   GradesTab,
 } from "@/components/class_dashboard";
-import RecentClassesSidebar from "@/components/layout/RecentClassesSidebar";
 import MainNavigation from "@/components/navigation/Navigation";
 import { HomeIcon, BookIcon, ReportIcon, BellIcon, LockIcon } from "@/components/dashboard/icons";
 
@@ -76,19 +75,6 @@ export default function ClassDashboardPage() {
     <div className="h-screen bg-slate-50 flex overflow-hidden">
       {/* Main Navigation (far left) */}
       <MainNavigation items={sidebarItems} activeId="classes" />
-      {/* Recent Classes Sidebar (left) */}
-      <RecentClassesSidebar
-        classes={classList.map(cls => ({
-          id: cls.id,
-          name: cls.name,
-          code: cls.group || cls.join_code || cls.track || '',
-          badge: 0 // Optionally, set badge count if available
-        }))}
-        activeClassId={classId}
-        onClassSelect={id => {
-          if (id !== classId) window.location.href = `/class/${id}`;
-        }}
-      />
       {/* Class Sidebar (middle left) */}
       <ClassSidebar classId={classId} activeTab={activeTab} onTabChange={setActiveTab} />
 
