@@ -11,14 +11,7 @@ import {
 } from "@/components/class_dashboard/icons";
 import MainNavigation from "@/components/navigation/Navigation";
 import RecentClassesSidebar from "@/components/layout/RecentClassesSidebar";
-import { HomeIcon, ReportIcon, BellIcon, LockIcon, BookIcon } from "@/components/dashboard/icons";
-import {
-  AssignmentHeader,
-  AssignmentInstructions,
-  ReferenceMaterials,
-  StudentPortal,
-  type UploadedFile
-} from "@/components/assignment";
+import { HomeIcon, ReportIcon, BellIcon, LockIcon } from "@/components/dashboard/icons";
 
 type TabId = "general" | "assignment" | "posts" | "quiz" | "students" | "files" | "grades";
 
@@ -103,18 +96,6 @@ export default function AssignmentDetailPage() {
       {/* Main Navigation (far left) */}
       <MainNavigation items={sidebarItems} activeId="classes" />
       {/* Recent Classes Sidebar (left) */}
-      <RecentClassesSidebar
-        classes={classList.map(cls => ({
-          id: cls.id,
-          name: cls.name,
-          code: cls.group || cls.join_code || cls.track || '',
-          badge: 0
-        }))}
-        activeClassId={classId}
-        onClassSelect={id => {
-          if (id !== classId) window.location.href = `/class/${id}`;
-        }}
-      />
       {/* Class Sidebar (middle left) */}
       <ClassSidebar classId={classId} activeTab={activeTab} onTabChange={handleTabChange} />
 
