@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import ClassGrid from "@/components/dashboard/ClassGrid";
-import Sidebar from "@/components/dashboard/Sidebar";
 import TermFilters from "@/components/dashboard/TermFilters";
 import JoinClassModal from "@/components/dashboard/JoinClassModal";
 import CreateClassModal, {
@@ -32,6 +31,7 @@ const sidebarItems = [
 ];
 
 import { CLASS_GRADIENTS, CLASS_ACCENT_COLORS } from "@/constants/class";
+import MainNavigation from "@/components/navigation/Navigation";
 
 const generateUniqueId = () => {
   return `class-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -142,9 +142,17 @@ export default function DashboardPage() {
     setIsCreateModalOpen(false);
   };
 
+  // Handler for main navigation
+  const handleNav = (id: string) => {
+    if (id === "classes") return;
+    // Add navigation logic for other items
+    router.push(`/${id}`);
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex">
-      <Sidebar items={sidebarItems} activeId="classes" />
+      {/* Main Navigation (far left) */}
+      <MainNavigation items={sidebarItems} activeId="classes" onNavigate={handleNav} />
 
       <div className="flex-1 flex flex-col min-w-0">
         <DashboardHeader

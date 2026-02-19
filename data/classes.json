@@ -30,5 +30,21 @@
     "term": "Term1",
     "accent": "#111827",
     "gradient": "from-slate-900 via-slate-800 to-slate-600"
+  },
+  {
+    "class_id": 1771506737684,
+    "id": "1771506737684",
+    "name": "1234",
+    "group": "1234",
+    "generation": "1234",
+    "description": "",
+    "join_code": "0IF8MF",
+    "owner_id": 1,
+    "cover_image_url": "",
+    "status": "inactive",
+    "track": "1234",
+    "term": "Term1",
+    "accent": "#0d9488",
+    "gradient": "from-teal-800 via-teal-700 to-cyan-500"
   }
 ]
