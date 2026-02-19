@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ClassSidebar,
   ClassTabs,
@@ -14,6 +14,9 @@ import {
   PlusIcon,
   MoreVerticalIcon
 } from "@/components/class_dashboard/icons";
+import MainNavigation from "@/components/navigation/Navigation";
+import RecentClassesSidebar from "@/components/layout/RecentClassesSidebar";
+import { HomeIcon, ReportIcon, BellIcon, LockIcon } from "@/components/dashboard/icons";
 
 type TabId = "general" | "assignment" | "posts" | "quiz" | "students" | "files" | "grades";
 
@@ -25,6 +28,7 @@ export default function AssignmentDetailPage() {
   const router = useRouter();
   const assignmentId = params.id as string;
   const [activeTab, setActiveTab] = useState<TabId>("assignment");
+  const [classList, setClassList] = useState<any[]>([]);
 
   // Extract classId from URL or use default
   const classId = "flutter"; // You can get this from query params or context
@@ -34,6 +38,19 @@ export default function AssignmentDetailPage() {
     router.push(`/class/${classId}`);
   };
 
+  // Fetch class list for sidebar
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await fetch("/api/classes");
+        const j = await res.json();
+        if (mounted && j?.ok && Array.isArray(j.data)) setClassList(j.data);
+      } catch (e) {}
+    })();
+    return () => { mounted = false; };
+  }, []);
+
   // Mock data - replace with API call
   const assignment = {
     title: "WB-CHALLENGE-Weather",
@@ -42,15 +59,38 @@ export default function AssignmentDetailPage() {
     module: "Module WB - List & Callbacks",
     gradingStatus: "Good",
     score: "100/2",
-    instruction: `Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks`,
+    instruction: `Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks Module WB - List & Callbacks`,
     referenceMaterials: [
       { name: "Assignment.docx", type: "document" }
     ]
   };
 
+  const sidebarItems = [
+    { id: "home", label: "Home", icon: HomeIcon },
+    { id: "classes", label: "Classes", icon: BookIcon },
+    { id: "reports", label: "Reports", icon: ReportIcon },
+    { id: "notifications", label: "Notifications", icon: BellIcon },
+    { id: "lock", label: "Lock", icon: LockIcon },
+  ];
+
   return (
     <div className="h-screen bg-slate-50 flex overflow-hidden">
-      {/* Left Sidebar */}
+      {/* Main Navigation (far left) */}
+      <MainNavigation items={sidebarItems} activeId="classes" />
+      {/* Recent Classes Sidebar (left) */}
+      <RecentClassesSidebar
+        classes={classList.map(cls => ({
+          id: cls.id,
+          name: cls.name,
+          code: cls.group || cls.join_code || cls.track || '',
+          badge: 0
+        }))}
+        activeClassId={classId}
+        onClassSelect={id => {
+          if (id !== classId) window.location.href = `/class/${id}`;
+        }}
+      />
+      {/* Class Sidebar (middle left) */}
       <ClassSidebar classId={classId} activeTab={activeTab} onTabChange={handleTabChange} />
 
       {/* Main Content Area */}
