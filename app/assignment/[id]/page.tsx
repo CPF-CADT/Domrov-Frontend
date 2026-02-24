@@ -218,15 +218,6 @@ export default function AssignmentDetailPage() {
         {/* Content Area with Two Columns */}
         <div className="flex-1 overflow-y-auto bg-slate-50">
           <div className="p-8">
-            {/* Breadcrumb Navigation */}
-            <div className="flex items-center gap-2 text-sm mb-6">
-              <span className="text-slate-600 hover:text-slate-900 cursor-pointer transition-colors">Courses</span>
-              <ChevronRightIcon className="w-4 h-4 text-slate-400" />
-              <span className="text-slate-600 hover:text-slate-900 cursor-pointer transition-colors">{assignment.course}</span>
-              <ChevronRightIcon className="w-4 h-4 text-slate-400" />
-              <span className="text-slate-900 font-medium">Assignment Submission</span>
-            </div>
-
             {/* Two Column Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-6">
               {/* Left Column - Assignment Title, Instructions & Reference Materials */}

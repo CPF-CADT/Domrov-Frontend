@@ -167,7 +167,7 @@ export default function UploadSection({
 
   return (
     <div>
-      <h3 className="text-lg font-bold text-slate-900 mb-4">Upload Your Solution</h3>
+      <h3 className="text-lg font-bold text-slate-900 mb-4">Upload Your Work</h3>
       
       {/* Upload Mode Toggle */}
       <div className="flex gap-2 mb-4">
@@ -179,7 +179,7 @@ export default function UploadSection({
               : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
           }`}
         >
-          📁 Upload Files/ZIP
+          📁 Upload Files    
         </button>
         <button
           onClick={() => setUploadMode('link')}
@@ -265,7 +265,7 @@ export default function UploadSection({
       {uploadedFiles.length > 0 && (
         <div>
           <h4 className="text-sm font-bold text-slate-700 uppercase tracking-wide mb-3">
-            UPLOADED FILES ({uploadedFiles.length})
+            Your Work 
           </h4>
           <div className="space-y-2">
             {uploadedFiles.map((file, index) => (

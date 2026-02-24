@@ -84,22 +84,31 @@ export default function CodeEditorView({ files, onClose }: CodeEditorViewProps) 
 
   const getFileIcon = (fileName: string) => {
     const ext = fileName.split('.').pop()?.toLowerCase();
-    const iconMap: Record<string, string> = {
-      'js': '📜',
-      'jsx': '⚛️',
-      'ts': '📘',
-      'tsx': '⚛️',
-      'py': '🐍',
-      'java': '☕',
-      'cpp': '⚙️',
-      'c': '⚙️',
-      'html': '🌐',
-      'css': '🎨',
-      'json': '📋',
-      'md': '📝',
-      'txt': '📄',
+    const iconColorMap: Record<string, { color: string; text: string }> = {
+      'js': { color: '#F7DF1E', text: 'JS' },
+      'jsx': { color: '#61DAFB', text: 'JSX' },
+      'ts': { color: '#3178C6', text: 'TS' },
+      'tsx': { color: '#3178C6', text: 'TSX' },
+      'py': { color: '#3776AB', text: 'PY' },
+      'java': { color: '#007396', text: 'JAVA' },
+      'dart': { color: '#00D2B8', text: 'DART' },
+      'cpp': { color: '#00599C', text: 'C++' },
+      'c': { color: '#A8B9CC', text: 'C' },
+      'html': { color: '#E34F26', text: 'HTML' },
+      'css': { color: '#1572B6', text: 'CSS' },
+      'json': { color: '#000000', text: 'JSON' },
+      'md': { color: '#083FA1', text: 'MD' },
+      'txt': { color: '#6B7280', text: 'TXT' },
     };
-    return iconMap[ext || ''] || '📄';
+    const icon = iconColorMap[ext || ''] || { color: '#6B7280', text: 'FILE' };
+    return (
+      <div 
+        className="w-6 h-6 flex items-center justify-center text-[10px] font-bold rounded"
+        style={{ backgroundColor: icon.color, color: 'white' }}
+      >
+        {icon.text}
+      </div>
+    );
   };
 
   const FileTreeItem = ({ item, depth = 0 }: { item: FileItem; depth?: number }) => {
@@ -110,11 +119,17 @@ export default function CodeEditorView({ files, onClose }: CodeEditorViewProps) 
         <div>
           <div
             onClick={() => setIsOpen(!isOpen)}
-            className="flex items-center gap-2 px-3 py-1.5 hover:bg-linear-to-r hover:from-purple-50 hover:to-pink-50 cursor-pointer group"
+            className="flex items-center gap-2 px-3 py-1.5 hover:bg-slate-700 cursor-pointer group"
             style={{ paddingLeft: `${depth * 12 + 12}px` }}
           >
-            <span className="text-purple-600 text-sm">{isOpen ? '📂' : '📁'}</span>
-            <span className="text-sm font-medium text-slate-700 group-hover:text-purple-700">{item.name}</span>
+            <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+              {isOpen ? (
+                <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
+              ) : (
+                <path fillRule="evenodd" d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a2 2 0 00-2 2v5a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" />
+              )}
+            </svg>
+            <span className="text-sm font-medium text-slate-300 group-hover:text-white">{item.name}</span>
           </div>
           {isOpen && item.children?.map((child, idx) => (
             <FileTreeItem key={idx} item={child} depth={depth + 1} />
@@ -126,13 +141,13 @@ export default function CodeEditorView({ files, onClose }: CodeEditorViewProps) 
     return (
       <div
         onClick={() => handleFileClick(item)}
-        className={`flex items-center gap-2 px-3 py-1.5 hover:bg-linear-to-r hover:from-blue-50 hover:to-indigo-50 cursor-pointer group ${
-          selectedFile?.path === item.path ? 'bg-linear-to-r from-blue-100 to-indigo-100' : ''
+        className={`flex items-center gap-2 px-3 py-1.5 hover:bg-slate-700 cursor-pointer group ${
+          selectedFile?.path === item.path ? 'bg-slate-700' : ''
         }`}
         style={{ paddingLeft: `${depth * 12 + 12}px` }}
       >
-        <span className="text-sm">{getFileIcon(item.name)}</span>
-        <span className={`text-sm ${selectedFile?.path === item.path ? 'font-semibold text-blue-700' : 'text-slate-600 group-hover:text-blue-600'}`}>
+        {getFileIcon(item.name)}
+        <span className={`text-sm ${selectedFile?.path === item.path ? 'font-semibold text-white' : 'text-slate-300 group-hover:text-white'}`}>
           {item.name}
         </span>
       </div>
@@ -140,19 +155,15 @@ export default function CodeEditorView({ files, onClose }: CodeEditorViewProps) 
   };
 
   return (
-    <div className="fixed inset-0 bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 z-50 flex flex-col">
+    <div className="fixed inset-0 bg-slate-900 z-50 flex flex-col">
       {/* Top Bar */}
-      <div className="bg-linear-to-r from-slate-800 to-purple-800 border-b border-purple-600/30 px-4 py-3 flex items-center justify-between">
+      <div className="bg-slate-800 border-b border-slate-700 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex gap-2">
-            <div className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 cursor-pointer"></div>
-            <div className="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-600 cursor-pointer"></div>
-            <div className="w-3 h-3 rounded-full bg-green-500 hover:bg-green-600 cursor-pointer" onClick={onClose}></div>
-          </div>
+          <span className="text-white font-semibold">Code Editor</span>
         </div>
         <button
           onClick={onClose}
-          className="px-4 py-2 bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-medium transition-all shadow-lg"
+          className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all shadow-lg flex items-center gap-2"
         >
           ← Back to Assignment
         </button>
@@ -160,8 +171,8 @@ export default function CodeEditorView({ files, onClose }: CodeEditorViewProps) 
 
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar - File Explorer */}
-        <div className="w-72 bg-linear-to-b from-slate-800 to-slate-900 border-r border-purple-600/30 flex flex-col">
-          <div className="px-4 py-3 border-b border-purple-600/30">
+        <div className="w-72 bg-slate-800 border-r border-slate-700 flex flex-col">
+          <div className="px-4 py-3 border-b border-slate-700">
             <h2 className="text-white font-semibold text-sm uppercase tracking-wide flex items-center gap-2">
               <span>📁</span> Files Explorer
             </h2>
@@ -177,18 +188,18 @@ export default function CodeEditorView({ files, onClose }: CodeEditorViewProps) 
         <div className="flex-1 flex flex-col bg-slate-900">
           {/* Tabs */}
           {openTabs.length > 0 && (
-            <div className="flex items-center gap-1 bg-slate-800 border-b border-purple-600/30 px-2 py-1 overflow-x-auto">
+            <div className="flex items-center gap-1 bg-slate-800 border-b border-slate-700 px-2 py-1 overflow-x-auto">
               {openTabs.map((tab, idx) => (
                 <div
                   key={idx}
                   onClick={() => setSelectedFile(tab)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-t-lg cursor-pointer group transition-all ${
                     selectedFile?.path === tab.path
-                      ? 'bg-linear-to-r from-purple-600 to-pink-600 text-white'
+                      ? 'bg-purple-600 text-white'
                       : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
                   }`}
                 >
-                  <span className="text-sm">{getFileIcon(tab.name)}</span>
+                  {getFileIcon(tab.name)}
                   <span className="text-sm font-medium">{tab.name.split('/').pop()}</span>
                   <button
                     onClick={(e) => {
@@ -238,11 +249,11 @@ export default function CodeEditorView({ files, onClose }: CodeEditorViewProps) 
           background: rgba(0, 0, 0, 0.2);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(168, 85, 247, 0.5);
+          background: rgba(100, 116, 139, 0.5);
           border-radius: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(168, 85, 247, 0.7);
+          background: rgba(100, 116, 139, 0.7);
         }
       `}</style>
     </div>
