@@ -6,9 +6,6 @@ import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import ClassGrid from "@/components/dashboard/ClassGrid";
 import TermFilters from "@/components/dashboard/TermFilters";
 import JoinClassModal from "@/components/dashboard/JoinClassModal";
-import CreateClassModal, {
-  type CreateClassData,
-} from "@/components/dashboard/CreateClassModal";
 import {
   BellIcon,
   BookIcon,
@@ -68,7 +65,6 @@ export default function DashboardPage() {
   const { activeTerm, setActiveTerm, filteredClasses } =
     useDashboardFilters(classList);
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   // Navigate to class dashboard when a class card is clicked
   const handleOpen = (id: string) => {
@@ -84,62 +80,6 @@ export default function DashboardPage() {
       alert("Invalid class code");
     }
     setIsJoinModalOpen(false);
-  };
-
-  const handleCreateClass = async (data: CreateClassData) => {
-    const randomIndex = Math.floor(Math.random() * CLASS_GRADIENTS.length);
-    const newClass: ClassCard = {
-      class_id: Date.now(),
-      id: Date.now().toString(),
-      name: data.name,
-      group: data.group,
-      generation: data.generation,
-      description: "",
-      join_code: Math.random().toString(36).substring(2, 8).toUpperCase(),
-      owner_id: 1,
-      cover_image_url: "",
-      status: data.status,
-      track: data.group,
-      term: "Term1",
-      accent: CLASS_ACCENT_COLORS[randomIndex],
-      gradient: CLASS_GRADIENTS[randomIndex],
-    };
-    try {
-      const res = await fetch("/api/classes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newClass),
-      });
-      const json = await res.json().catch(() => ({}));
-      if (res.ok) {
-        // Use response body if provided
-        if (json?.data && Array.isArray(json.data)) {
-          setClassList(json.data as any);
-        } else {
-          // Fetch latest list from API as fallback
-          try {
-            const resp = await fetch("/api/classes");
-            const j = await resp.json();
-            if (j?.ok && Array.isArray(j.data)) setClassList(j.data as any);
-            else setClassList((prev) => [newClass, ...prev]);
-          } catch (e) {
-            setClassList((prev) => [newClass, ...prev]);
-          }
-        }
-        if (json?.volatile)
-          alert(
-            "Class created but not persisted to disk (in-memory fallback).",
-          );
-      } else {
-        alert(
-          "Failed to save class to JSON file: " +
-            (json?.details || JSON.stringify(json)),
-        );
-      }
-    } catch (err) {
-      alert("Error saving class: " + err);
-    }
-    setIsCreateModalOpen(false);
   };
 
   // Handler for main navigation
@@ -158,7 +98,6 @@ export default function DashboardPage() {
         <DashboardHeader
           activeTerm={activeTerm}
           onChangeTerm={setActiveTerm}
-          onCreateClass={() => setIsCreateModalOpen(true)}
           onJoinClass={() => setIsJoinModalOpen(true)}
         />
         <div className="p-4">
@@ -199,12 +138,6 @@ export default function DashboardPage() {
         isOpen={isJoinModalOpen}
         onClose={() => setIsJoinModalOpen(false)}
         onJoin={handleJoinClass}
-      />
-
-      <CreateClassModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onCreate={handleCreateClass}
       />
     </div>
   );

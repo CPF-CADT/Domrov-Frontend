@@ -46,5 +46,37 @@
     "term": "Term1",
     "accent": "#0d9488",
     "gradient": "from-teal-800 via-teal-700 to-cyan-500"
+  },
+  {
+    "class_id": 1771941981148,
+    "id": "1771941981148",
+    "name": "Cooler Master MWE 550W 80+ Bronze",
+    "group": "asdf",
+    "generation": "asdfasdf",
+    "description": "",
+    "join_code": "CSIGGS",
+    "owner_id": 1,
+    "cover_image_url": "",
+    "status": "inactive",
+    "track": "asdf",
+    "term": "Term1",
+    "accent": "#7c3aed",
+    "gradient": "from-purple-800 via-purple-700 to-pink-500"
+  },
+  {
+    "class_id": 1771942375486,
+    "id": "1771942375486",
+    "name": "dfdff",
+    "group": "dfdf",
+    "generation": "efdfdfdf",
+    "description": "",
+    "join_code": "YC9XZF",
+    "owner_id": 1,
+    "cover_image_url": "",
+    "status": "active",
+    "track": "dfdf",
+    "term": "Term1",
+    "accent": "#0d9488",
+    "gradient": "from-teal-800 via-teal-700 to-cyan-500"
   }
 ]
