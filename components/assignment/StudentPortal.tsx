@@ -11,6 +11,10 @@ interface StudentPortalProps {
   uploadedFiles: UploadedFile[];
   onFilesAdded: (files: UploadedFile[]) => void;
   onFileRemoved: (index: number) => void;
+  assignmentId?: string;
+  userId?: string;
+  onUploadComplete?: (data: any) => void;
+  onFileClick?: (file: UploadedFile) => void;
 }
 
 /**
@@ -23,7 +27,11 @@ export default function StudentPortal({
   submittedAt,
   uploadedFiles,
   onFilesAdded,
-  onFileRemoved
+  onFileRemoved,
+  assignmentId = "default",
+  userId = "1",
+  onUploadComplete,
+  onFileClick
 }: StudentPortalProps) {
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm sticky top-6">
@@ -62,6 +70,10 @@ export default function StudentPortal({
           uploadedFiles={uploadedFiles}
           onFilesAdded={onFilesAdded}
           onFileRemoved={onFileRemoved}
+          assignmentId={assignmentId}
+          userId={userId}
+          onUploadComplete={onUploadComplete}
+          onFileClick={onFileClick}
         />
 
         {/* Submission Status */}
