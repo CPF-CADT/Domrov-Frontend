@@ -10,8 +10,16 @@ import {
   ChevronRightIcon,
 } from "@/components/class_dashboard/icons";
 import MainNavigation from "@/components/navigation/Navigation";
-import RecentClassesSidebar from "@/components/layout/RecentClassesSidebar";
-import { HomeIcon, ReportIcon, BellIcon, LockIcon } from "@/components/dashboard/icons";
+import RecentClassesSidebar from "@/components/layout_temp/RecentClassesSidebar";
+import { HomeIcon, ReportIcon, BellIcon, LockIcon, BookIcon } from "@/components/dashboard/icons";
+import {
+  AssignmentHeader,
+  AssignmentInstructions,
+  ReferenceMaterials,
+  StudentPortal,
+  type UploadedFile
+} from "@/components/assignment";
+import IDE from "@/components/assignment/IDE";
 
 type TabId = "general" | "assignment" | "posts" | "quiz" | "students" | "files" | "grades";
 
@@ -25,10 +33,9 @@ export default function AssignmentDetailPage() {
   const assignmentId = params.id as string;
   const [activeTab, setActiveTab] = useState<TabId>("assignment");
   const [classList, setClassList] = useState<any[]>([]);
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([
-    { name: "sorting_logic_v2.py", size: "14.2 KB", uploadedAt: "2 mins ago" },
-    { name: "performance_report.zip", size: "87.8 MB", uploadedAt: "1 min ago" }
-  ]);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [selectedFile, setSelectedFile] = useState<any>(null);
+  const [showPreview, setShowPreview] = useState(false);
 
   // Extract classId from URL or use default
   const classId = "flutter"; // You can get this from query params or context
@@ -50,6 +57,48 @@ export default function AssignmentDetailPage() {
     })();
     return () => { mounted = false; };
   }, []);
+
+  // Fetch existing submissions
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await fetch(`/api/assignments/upload?assignmentId=${assignmentId}&userId=1`);
+        const j = await res.json();
+        if (mounted && j?.success && Array.isArray(j.data) && j.data.length > 0) {
+          const latestSubmission = j.data[j.data.length - 1];
+          const files = [
+            ...(latestSubmission.files || []).map((f: any) => ({
+              name: f.name,
+              size: typeof f.size === 'number' ? formatFileSize(f.size) : f.size,
+              uploadedAt: new Date(f.uploadedAt).toLocaleString(),
+              path: f.path,
+              type: 'file' as const
+            })),
+            ...(latestSubmission.links || []).map((l: any) => ({
+              name: l.url,
+              size: 'Link',
+              uploadedAt: new Date(l.addedAt).toLocaleString(),
+              type: 'link' as const,
+              url: l.url
+            }))
+          ];
+          setUploadedFiles(files);
+        }
+      } catch (e) {
+        console.error('Failed to fetch submissions:', e);
+      }
+    })();
+    return () => { mounted = false; };
+  }, [assignmentId]);
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+  };
 
   // Mock data - replace with API call
   const assignment = {
@@ -89,6 +138,31 @@ export default function AssignmentDetailPage() {
 
   const handleFileRemoved = (index: number) => {
     setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleUploadComplete = (data: any) => {
+    console.log('Upload complete:', data);
+    // You can show a success message or update UI here
+  };
+
+  const handleFileClick = async (file: UploadedFile) => {
+    if (!file.path) return;
+    
+    try {
+      const response = await fetch(file.path);
+      const content = await response.text();
+      
+      setSelectedFile({
+        type: 'file',
+        name: file.name,
+        path: file.path,
+        content: content
+      });
+      setShowPreview(true);
+    } catch (error) {
+      console.error('Failed to load file:', error);
+      alert('Could not preview file. The file might not be accessible.');
+    }
   };
 
   return (
@@ -147,9 +221,40 @@ export default function AssignmentDetailPage() {
                   uploadedFiles={uploadedFiles}
                   onFilesAdded={handleFilesAdded}
                   onFileRemoved={handleFileRemoved}
+                  assignmentId={assignmentId}
+                  userId="1"
+                  onUploadComplete={handleUploadComplete}
+                  onFileClick={handleFileClick}
                 />
               </div>
             </div>
+
+            {/* File Preview Modal */}
+            {showPreview && selectedFile && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+                <div className="bg-white rounded-2xl w-full max-w-5xl h-[90vh] flex flex-col">
+                  <div className="flex items-center justify-between p-4 border-b border-slate-200">
+                    <h3 className="text-lg font-bold text-slate-900">
+                      📄 {selectedFile.name}
+                    </h3>
+                    <button
+                      onClick={() => setShowPreview(false)}
+                      className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                    >
+                      <svg className="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div className="flex-1 p-4">
+                    <IDE
+                      file={selectedFile}
+                      readOnly={true}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
