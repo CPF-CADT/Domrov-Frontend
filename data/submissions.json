@@ -136,5 +136,21 @@
         "addedAt": "2026-02-24T13:34:26.109Z"
       }
     ]
+  },
+  {
+    "id": "1771941697941",
+    "assignmentId": "1",
+    "userId": "1",
+    "submittedAt": "2026-02-24T14:01:37.941Z",
+    "type": "file",
+    "files": [
+      {
+        "name": "main.dart",
+        "size": 1316,
+        "path": "/uploads/1/1_1771941697942_main.dart",
+        "uploadedAt": "2026-02-24T14:01:37.944Z"
+      }
+    ],
+    "links": []
   }
 ]
