@@ -6,6 +6,7 @@ import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import ClassGrid from "@/components/dashboard/ClassGrid";
 import TermFilters from "@/components/dashboard/TermFilters";
 import JoinClassModal from "@/components/dashboard/JoinClassModal";
+import DeleteConfirmModal from "@/components/dashboard/DeleteConfirmModal";
 import {
   BellIcon,
   BookIcon,
@@ -65,6 +66,11 @@ export default function DashboardPage() {
   const { activeTerm, setActiveTerm, filteredClasses } =
     useDashboardFilters(classList);
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
+  const [deleteModalState, setDeleteModalState] = useState<{
+    isOpen: boolean;
+    classId: string | null;
+    className: string;
+  }>({ isOpen: false, classId: null, className: "" });
 
   // Navigate to class dashboard when a class card is clicked
   const handleOpen = (id: string) => {
@@ -80,6 +86,42 @@ export default function DashboardPage() {
       alert("Invalid class code");
     }
     setIsJoinModalOpen(false);
+  };
+
+  const handleDeleteClick = (id: string) => {
+    const classToDelete = classList.find((c) => c.id === id);
+    if (classToDelete) {
+      setDeleteModalState({
+        isOpen: true,
+        classId: id,
+        className: classToDelete.name,
+      });
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteModalState.classId) return;
+
+    try {
+      const res = await fetch(`/api/classes/${deleteModalState.classId}`, {
+        method: "DELETE",
+      });
+      
+      if (res.ok) {
+        // Remove from local state
+        setClassList((prev) => prev.filter((c) => c.id !== deleteModalState.classId));
+        setDeleteModalState({ isOpen: false, classId: null, className: "" });
+      } else {
+        const json = await res.json().catch(() => ({}));
+        alert("Failed to delete class: " + (json?.details || "Unknown error"));
+      }
+    } catch (err) {
+      alert("Error deleting class: " + err);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteModalState({ isOpen: false, classId: null, className: "" });
   };
 
   // Handler for main navigation
@@ -129,7 +171,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="grid gap-6 mt-6 sm:grid-cols-2 lg:grid-cols-3">
-            <ClassGrid items={filteredClasses} onOpen={handleOpen} />
+            <ClassGrid items={filteredClasses} onOpen={handleOpen} onDelete={handleDeleteClick} />
           </div>
         </main>
       </div>
@@ -138,6 +180,13 @@ export default function DashboardPage() {
         isOpen={isJoinModalOpen}
         onClose={() => setIsJoinModalOpen(false)}
         onJoin={handleJoinClass}
+      />
+
+      <DeleteConfirmModal
+        isOpen={deleteModalState.isOpen}
+        className={deleteModalState.className}
+        onConfirm={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
       />
     </div>
   );
