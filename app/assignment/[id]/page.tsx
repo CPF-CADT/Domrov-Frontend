@@ -20,6 +20,7 @@ import {
   type UploadedFile
 } from "@/components/assignment";
 import IDE from "@/components/assignment/IDE";
+import CodeEditorView from "@/components/assignment/CodeEditorView";
 
 type TabId = "general" | "assignment" | "posts" | "quiz" | "students" | "files" | "grades";
 
@@ -36,6 +37,8 @@ export default function AssignmentDetailPage() {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [selectedFile, setSelectedFile] = useState<any>(null);
   const [showPreview, setShowPreview] = useState(false);
+  const [showCodeEditor, setShowCodeEditor] = useState(false);
+  const [editorFiles, setEditorFiles] = useState<any[]>([]);
 
   // Extract classId from URL or use default
   const classId = "flutter"; // You can get this from query params or context
@@ -148,30 +151,64 @@ export default function AssignmentDetailPage() {
   const handleFileClick = async (file: UploadedFile) => {
     if (!file.path) return;
     
-    try {
-      const response = await fetch(file.path);
-      const content = await response.text();
-      
-      setSelectedFile({
-        type: 'file',
-        name: file.name,
-        path: file.path,
-        content: content
-      });
-      setShowPreview(true);
-    } catch (error) {
-      console.error('Failed to load file:', error);
-      alert('Could not preview file. The file might not be accessible.');
+    // Check if it's a ZIP file
+    if (file.name.toLowerCase().endsWith('.zip')) {
+      try {
+        const response = await fetch('/api/assignments/extract-zip', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filePath: file.path })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          setEditorFiles(result.files);
+          setShowCodeEditor(true);
+        } else {
+          alert('Failed to extract ZIP file: ' + result.message);
+        }
+      } catch (error) {
+        console.error('Failed to extract ZIP:', error);
+        alert('Could not extract ZIP file.');
+      }
+    } else {
+      // Regular file - open in code editor
+      try {
+        const response = await fetch(file.path);
+        const content = await response.text();
+        
+        setEditorFiles([{
+          name: file.name,
+          path: file.name,
+          content: content,
+          type: 'file'
+        }]);
+        setShowCodeEditor(true);
+      } catch (error) {
+        console.error('Failed to load file:', error);
+        alert('Could not preview file. The file might not be accessible.');
+      }
     }
   };
 
   return (
-    <div className="h-screen bg-white flex overflow-hidden">
-      {/* Main Navigation (far left) */}
-      <MainNavigation items={sidebarItems} activeId="classes" />
-      {/* Recent Classes Sidebar (left) */}
-      {/* Class Sidebar (middle left) */}
-      <ClassSidebar classId={classId} activeTab={activeTab} onTabChange={handleTabChange} />
+    <>
+      {/* Code Editor View */}
+      {showCodeEditor && (
+        <CodeEditorView
+          files={editorFiles}
+          onClose={() => setShowCodeEditor(false)}
+        />
+      )}
+
+      {/* Main Assignment View */}
+      <div className={`h-screen bg-white flex overflow-hidden ${showCodeEditor ? 'hidden' : ''}`}>
+        {/* Main Navigation (far left) */}
+        <MainNavigation items={sidebarItems} activeId="classes" />
+        {/* Recent Classes Sidebar (left) */}
+        {/* Class Sidebar (middle left) */}
+        <ClassSidebar classId={classId} activeTab={activeTab} onTabChange={handleTabChange} />
 
       {/* Main Content Area - Full Width */}
       <div className="flex-1 flex flex-col min-w-0">
@@ -181,15 +218,6 @@ export default function AssignmentDetailPage() {
         {/* Content Area with Two Columns */}
         <div className="flex-1 overflow-y-auto bg-slate-50">
           <div className="p-8">
-            {/* Breadcrumb Navigation */}
-            <div className="flex items-center gap-2 text-sm mb-6">
-              <span className="text-slate-600 hover:text-slate-900 cursor-pointer transition-colors">Courses</span>
-              <ChevronRightIcon className="w-4 h-4 text-slate-400" />
-              <span className="text-slate-600 hover:text-slate-900 cursor-pointer transition-colors">{assignment.course}</span>
-              <ChevronRightIcon className="w-4 h-4 text-slate-400" />
-              <span className="text-slate-900 font-medium">Assignment Submission</span>
-            </div>
-
             {/* Two Column Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-6">
               {/* Left Column - Assignment Title, Instructions & Reference Materials */}
@@ -229,35 +257,10 @@ export default function AssignmentDetailPage() {
               </div>
             </div>
 
-            {/* File Preview Modal */}
-            {showPreview && selectedFile && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-                <div className="bg-white rounded-2xl w-full max-w-5xl h-[90vh] flex flex-col">
-                  <div className="flex items-center justify-between p-4 border-b border-slate-200">
-                    <h3 className="text-lg font-bold text-slate-900">
-                      📄 {selectedFile.name}
-                    </h3>
-                    <button
-                      onClick={() => setShowPreview(false)}
-                      className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-                    >
-                      <svg className="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="flex-1 p-4">
-                    <IDE
-                      file={selectedFile}
-                      readOnly={true}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
     </div>
+    </>
   );
 }

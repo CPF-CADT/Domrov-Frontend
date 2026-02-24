@@ -136,5 +136,37 @@
         "addedAt": "2026-02-24T13:34:26.109Z"
       }
     ]
+  },
+  {
+    "id": "1771941697941",
+    "assignmentId": "1",
+    "userId": "1",
+    "submittedAt": "2026-02-24T14:01:37.941Z",
+    "type": "file",
+    "files": [
+      {
+        "name": "main.dart",
+        "size": 1316,
+        "path": "/uploads/1/1_1771941697942_main.dart",
+        "uploadedAt": "2026-02-24T14:01:37.944Z"
+      }
+    ],
+    "links": []
+  },
+  {
+    "id": "1771943921538",
+    "assignmentId": "1",
+    "userId": "1",
+    "submittedAt": "2026-02-24T14:38:41.538Z",
+    "type": "file",
+    "files": [
+      {
+        "name": "START_CODE 1.zip",
+        "size": 8858,
+        "path": "/uploads/1/1_1771943921538_START_CODE 1.zip",
+        "uploadedAt": "2026-02-24T14:38:41.541Z"
+      }
+    ],
+    "links": []
   }
 ]

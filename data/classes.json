@@ -46,5 +46,40 @@
     "term": "Term1",
     "accent": "#7c3aed",
     "gradient": "from-purple-800 via-purple-700 to-pink-500"
+<<<<<<< HEAD
+  },
+  {
+    "class_id": 1771942375486,
+    "id": "1771942375486",
+    "name": "dfdff",
+    "group": "dfdf",
+    "generation": "efdfdfdf",
+    "description": "",
+    "join_code": "YC9XZF",
+    "owner_id": 1,
+    "cover_image_url": "",
+    "status": "active",
+    "track": "dfdf",
+    "term": "Term1",
+    "accent": "#0d9488",
+    "gradient": "from-teal-800 via-teal-700 to-cyan-500"
+  },
+  {
+    "class_id": 1771943499335,
+    "id": "1771943499335",
+    "name": "Hassadas",
+    "group": "asdsa",
+    "generation": "123123",
+    "description": "",
+    "join_code": "EH5OQC",
+    "owner_id": 1,
+    "cover_image_url": "",
+    "status": "active",
+    "track": "asdsa",
+    "term": "Term1",
+    "accent": "#4f46e5",
+    "gradient": "from-indigo-800 via-indigo-700 to-blue-500"
+=======
+>>>>>>> 961d6d0a3a567d416306df0827cbaaed9f31f7fe
   }
 ]
