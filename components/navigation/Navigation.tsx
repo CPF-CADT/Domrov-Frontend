@@ -1,29 +1,35 @@
-import React from "react";
+"use client";
+
+import { useRouter } from "next/navigation";
+import { HomeIcon, BookIcon, ReportIcon, BellIcon, LockIcon } from "@/components/dashboard/icons";
+
 
 /**
  * MainNavigation - Vertical sidebar navigation for main app sections.
  * Reusable across layouts. Accepts items and activeId props.
  */
-export interface NavigationItem {
-  id: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-}
+// Navigation items are now defined here to avoid passing icon functions from server to client
+const navItems = [
+  { id: "home", label: "Home", icon: HomeIcon, href: "/" },
+  { id: "bookmark", label: "Bookmark", icon: BookIcon, href: "/bookmarks" },
+  { id: "star", label: "Star", icon: ReportIcon, href: "/starred" },
+  { id: "bell", label: "Notifications", icon: BellIcon, href: "/notifications" },
+  { id: "lock", label: "Lock", icon: LockIcon, href: "/pricing" },
+];
 
 interface MainNavigationProps {
-  items: NavigationItem[];
   activeId: string;
-  onNavigate?: (id: string) => void;
 }
 
-const MainNavigation: React.FC<MainNavigationProps> = ({ items, activeId, onNavigate }) => {
+const MainNavigation: React.FC<MainNavigationProps> = ({ activeId }) => {
+  const router = useRouter();
   return (
     <aside className="w-16 bg-white border-r border-slate-200 flex flex-col items-center py-6 space-y-6 min-h-screen">
       <div className="h-10 w-10 rounded-xl bg-[#0B1531] flex items-center justify-center text-white font-black text-sm mb-2">
         <span className="tracking-tight">DR</span>
       </div>
       <nav className="flex flex-col items-center space-y-5">
-        {items.map((item) => {
+        {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = item.id === activeId;
           return (
@@ -35,7 +41,7 @@ const MainNavigation: React.FC<MainNavigationProps> = ({ items, activeId, onNavi
                   : "text-slate-500 hover:bg-slate-100"
               }`}
               aria-label={item.label}
-              onClick={() => onNavigate?.(item.id)}
+              onClick={() => router.push(item.href)}
             >
               <Icon className="h-5 w-5" />
             </button>

@@ -8,7 +8,6 @@ import {
   GeneralTab,
   AssignmentTab,
   PostsTab,
-  QuizTab,
   StudentsTab,
   FilesTab,
   GradesTab,
@@ -16,7 +15,7 @@ import {
 import MainNavigation from "@/components/navigation/Navigation";
 import { HomeIcon, BookIcon, ReportIcon, BellIcon, LockIcon } from "@/components/dashboard/icons";
 
-type TabId = "general" | "assignment" | "posts" | "quiz" | "students" | "files" | "grades";
+type TabId = "general" | "assignment" | "posts" | "students" | "files" | "grades";
 
 /**
  * ClassDashboardPage - Main view for individual class with sidebar navigation and tabs.
@@ -49,8 +48,6 @@ export default function ClassDashboardPage() {
         return <AssignmentTab classId={classId} />;
       case "posts":
         return <PostsTab classId={classId} />;
-      case "quiz":
-        return <QuizTab classId={classId} />;
       case "students":
         return <StudentsTab classId={classId} />;
       case "files":

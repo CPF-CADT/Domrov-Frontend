@@ -9,7 +9,7 @@ import {
   TvIcon 
 } from "./icons";
 
-type TabId = "general" | "assignment" | "posts" | "quiz" | "students" | "files" | "grades";
+type TabId = "general" | "assignment" | "posts" | "students" | "files" | "grades";
 
 interface ClassSidebarProps {
   classId: string;
@@ -27,7 +27,6 @@ export default function ClassSidebar({ classId, activeTab, onTabChange }: ClassS
   const navItems = [
     { id: "general" as TabId, icon: TvIcon, label: "General" },
     { id: "assignment" as TabId, icon: GraduationCapIcon, label: "Assignment" },
-    { id: "quiz" as TabId, icon: LightbulbIcon, label: "Quiz" },
     { id: "grades" as TabId, icon: TvIcon, label: "Grades" },
   ];
 
@@ -65,12 +64,12 @@ export default function ClassSidebar({ classId, activeTab, onTabChange }: ClassS
               }`}
               title={classItem.name}
             >
-              <div className={`w-14 h-14 ${classItem.color} rounded-xl flex items-center justify-center mx-auto shadow-sm ${
+              <div className={`w-14 h-14 ${classItem.color} rounded-xl mx-auto shadow-sm grid place-items-center ${
                 classItem.isActive 
                   ? "ring-2 ring-white/80 ring-offset-2 ring-offset-[#0c1929]" 
                   : "opacity-70 hover:opacity-100 transition-opacity duration-150"
               }`}>
-                <span className="text-white font-semibold text-sm">{classItem.badge}</span>
+                <span className="text-white font-bold text-[1rem] leading-tight text-center w-full">{classItem.badge}</span>
               </div>
               {classItem.isActive && (
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 bg-white rounded-r"></div>
