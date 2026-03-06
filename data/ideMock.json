@@ -213,6 +213,46 @@
       "status": "submitted",
       "score": null,
       "feedback": {}
+    },
+    {
+      "id": "1771950923436",
+      "assignmentId": "1",
+      "userId": "1",
+      "submittedAt": "2026-02-24T16:35:23.436Z",
+      "type": "file",
+      "files": [
+        {
+          "name": "START_CODE 1.zip",
+          "size": 8858,
+          "path": "/uploads/1/1_1771950923437_START_CODE 1.zip",
+          "uploadedAt": "2026-02-24T16:35:23.439Z"
+        }
+      ],
+      "links": [],
+      "codeFiles": [],
+      "status": "submitted",
+      "score": null,
+      "feedback": {}
+    },
+    {
+      "id": "1771950929801",
+      "assignmentId": "1",
+      "userId": "1",
+      "submittedAt": "2026-02-24T16:35:29.801Z",
+      "type": "file",
+      "files": [
+        {
+          "name": "color_app.dart",
+          "size": 3987,
+          "path": "/uploads/1/1_1771950929802_color_app.dart",
+          "uploadedAt": "2026-02-24T16:35:29.803Z"
+        }
+      ],
+      "links": [],
+      "codeFiles": [],
+      "status": "submitted",
+      "score": null,
+      "feedback": {}
     }
   ]
 }

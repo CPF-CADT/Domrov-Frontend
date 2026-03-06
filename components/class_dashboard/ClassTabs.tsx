@@ -14,7 +14,7 @@ import {
   FolderIcon
 } from "./icons";
 
-type TabId = "general" | "assignment" | "posts" | "quiz" | "students" | "files" | "grades";
+type TabId = "general" | "assignment" | "posts" | "students" | "files" | "grades";
 
 interface ClassTabsProps {
   activeTab: TabId;
@@ -51,8 +51,6 @@ export default function ClassTabs({ activeTab }: ClassTabsProps) {
         return ClipboardIcon;
       case "posts":
         return MessageIcon;
-      case "quiz":
-        return LightbulbIcon;
       case "students":
         return UsersIcon;
       case "files":

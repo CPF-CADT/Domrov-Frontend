@@ -13,21 +13,7 @@ interface GeneralTabProps {
 export default function GeneralTab({ classId }: GeneralTabProps) {
   const router = useRouter();
 
-  // Mock data for quizzes
-  const quizzes = [
-    {
-      id: "1",
-      title: "WB-CHALLENGE-Weather",
-      dueDate: "Due at 11:59 PM",
-      module: "Module WB - List & Callbacks",
-    },
-    {
-      id: "2",
-      title: "WB-CHALLENGE-Weather",
-      dueDate: "Due at 11:59 PM",
-      module: "Module WB - List & Callbacks",
-    },
-  ];
+  // ...existing code...
 
   // Mock data for assignments
   const assignments = [
@@ -59,32 +45,6 @@ export default function GeneralTab({ classId }: GeneralTabProps) {
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
-
-      {/* Quiz Section */}
-      <div className="bg-white rounded-lg border border-slate-200 p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <LightbulbIcon className="w-5 h-5 text-slate-700" />
-          <h2 className="text-lg font-semibold text-slate-900">Quiz</h2>
-        </div>
-        
-        <div className="space-y-3">
-          {quizzes.map((quiz) => (
-            <div
-              key={quiz.id}
-              onClick={() => router.push(`/assignment/${quiz.id}`)}
-              className="border border-slate-200 rounded-xl p-4 hover:shadow-md hover:border-slate-300 transition-all cursor-pointer"
-            >
-              <h3 className="font-semibold text-slate-900 mb-2">{quiz.title}</h3>
-              <p className="text-sm text-slate-600 mb-2">{quiz.dueDate}</p>
-              <div className="flex items-center gap-2 text-xs text-slate-500">
-                <LightbulbIcon className="w-4 h-4" />
-                <span>{quiz.module}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Assignment Section */}
       <div className="bg-white rounded-lg border border-slate-200 p-6">
         <div className="flex items-center gap-2 mb-4">
