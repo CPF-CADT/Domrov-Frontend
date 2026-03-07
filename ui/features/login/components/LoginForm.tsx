@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FormField } from "@/ui/components/forms";
 import PrimaryButton from "@/ui/design-system/primitives/PrimaryButton";
@@ -8,15 +8,70 @@ import GoogleOAuthButton from "@/ui/features/login/components/GoogleOAuthButton"
 import GitHubOAuthButton from "@/ui/features/login/components/GitHubOAuthButton";
 
 /**
- * LoginForm - Mock login form component.
- * Redirects to dashboard on submit (no actual authentication).
+ * LoginForm - Login form component with API integration.
+ * Authenticates user credentials and redirects to dashboard on success.
  */
 export default function LoginForm() {
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const validate = () => {
+    if (!email || !password) {
+      setError("Please fill in all fields");
+      return false;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("Please enter a valid email address");
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    router.push("/dashboard");
+    setError(null);
+
+    if (!validate()) return;
+
+    setLoading(true);
+    try {
+      const payload = {
+        email,
+        password,
+      };
+
+      const res = await fetch("https://api.domrov.app/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || "Login failed. Please check your credentials."
+        );
+      }
+
+      const data = await res.json();
+      
+      // Validate response has required access_token
+      if (!data.access_token) {
+        throw new Error("Invalid response from server. Missing authentication token.");
+      }
+
+      // Store token
+      localStorage.setItem("authToken", data.access_token);
+
+      router.push("/dashboard");
+    } catch (err: any) {
+      setError(err.message || "An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -29,6 +84,8 @@ export default function LoginForm() {
           type="email"
           required
           placeholder="you@example.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
 
         <FormField
@@ -37,12 +94,22 @@ export default function LoginForm() {
           type="password"
           required
           placeholder="••••••••"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
 
+        {error && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+            {error}
+          </div>
+        )}
+
         <div className="space-y-3">
-          <PrimaryButton type="submit">Continue</PrimaryButton>
+          <PrimaryButton type="submit" disabled={loading}>
+            {loading ? "Logging in..." : "Continue"}
+          </PrimaryButton>
           <p className="text-xs text-slate-500 text-center">
-            After submitting, you will be taken to the dashboard mock.
+            Sign in with your email and password to access your account.
           </p>
         </div>
       </form>
