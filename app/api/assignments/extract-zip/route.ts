@@ -1,49 +1,36 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { readFile } from 'fs/promises';
-import path from 'path';
-import AdmZip from 'adm-zip';
+import { NextRequest, NextResponse } from "next/server";
+import { extractZip } from "@/domains/submissions/zipExtractor";
 
 export async function POST(request: NextRequest) {
   try {
     const { filePath } = await request.json();
-    
-    if (!filePath) {
+
+    if (!filePath || typeof filePath !== "string") {
       return NextResponse.json(
-        { success: false, message: 'File path is required' },
+        { success: false, message: "File path is required and must be a string" },
         { status: 400 }
       );
     }
 
-    const fullPath = path.join(process.cwd(), 'public', filePath);
-    
-    // Read the ZIP file
-    const zip = new AdmZip(fullPath);
-    const zipEntries = zip.getEntries();
-    
-    const files: any[] = [];
-    
-    zipEntries.forEach((entry) => {
-      if (!entry.isDirectory) {
-        const content = entry.getData().toString('utf8');
-        files.push({
-          name: entry.entryName,
-          path: entry.entryName,
-          content: content,
-          size: entry.header.size,
-          type: 'file'
-        });
-      }
-    });
-    
+    // Block suspicious patterns
+    if (filePath.includes("..") || filePath.includes("\0")) {
+      return NextResponse.json(
+        { success: false, message: "Invalid file path" },
+        { status: 400 }
+      );
+    }
+
+    const files = extractZip(filePath);
+
     return NextResponse.json({
       success: true,
-      files: files
+      files,
     });
 
   } catch (error) {
-    console.error('ZIP extraction error:', error);
+    console.error("ZIP extraction error:", error);
     return NextResponse.json(
-      { success: false, message: 'Failed to extract ZIP file', error: String(error) },
+      { success: false, message: "Failed to extract ZIP file" },
       { status: 500 }
     );
   }
