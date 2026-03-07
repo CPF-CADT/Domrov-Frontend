@@ -3,5 +3,4 @@ export interface OAuthProvider {
   name: string;
   auth_url: string;
   client_id: string;
-  client_secret: string;
 }
