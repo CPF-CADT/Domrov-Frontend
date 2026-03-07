@@ -9,7 +9,7 @@ interface GoogleOAuthButtonProps {
 }
 
 const GoogleOAuthButton: React.FC<GoogleOAuthButtonProps> = ({
-    redirectUrl = 'http://localhost:3000/auth/google/login',
+    redirectUrl = 'https://api.domrov.app/auth/google/login/',
     width = 500,
     height = 600,
 }) => {
