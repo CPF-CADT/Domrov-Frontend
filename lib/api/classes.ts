@@ -1,3 +1,15 @@
+export async function joinClassByCode(joinCode: string): Promise<{ classId: number; className: string; joinedAt: string }> {
+    const res = await fetch("https://api.domrov.app/class/join", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ joinCode }),
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || !json.success) {
+        throw new Error(json?.error ?? "Failed to join class");
+    }
+    return json.data;
+}
 import type { ClassCard } from "@/types/classCard";
 
 export interface CreateClassClientInput {
@@ -8,29 +20,30 @@ export interface CreateClassClientInput {
 }
 
 export async function fetchClasses(): Promise<ClassCard[]> {
-    const res = await fetch("/api/classes");
+    const res = await fetch("https://api.domrov.app/class/my-classes");
     const json = await res.json();
-    if (json?.ok && Array.isArray(json.data)) {
-        return json.data as ClassCard[];
+    if (json?.success && json.data) {
+        // If the API returns a single class, wrap it in an array
+        const data = Array.isArray(json.data) ? json.data : [json.data];
+        return data as ClassCard[];
     }
     throw new Error(json?.error ?? "Failed to fetch classes");
 }
 
-export async function createClass(input: CreateClassClientInput): Promise<ClassCard[]> {
-    const res = await fetch("/api/classes", {
+export async function createClass(input: { name: string; description: string; group?: string }): Promise<ClassCard> {
+    // Only include name, description, and group
+    const { name, description, group } = input;
+    const payload = { name, description, group };
+    const res = await fetch("https://api.domrov.app/class", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(input),
+        body: JSON.stringify(payload),
     });
     const json = await res.json().catch(() => ({}));
-    if (!res.ok) {
-        throw new Error(
-            json?.fields
-                ? Object.values(json.fields).join("; ")
-                : json?.details ?? json?.error ?? "Failed to create class",
-        );
+    if (!res.ok || !json.success) {
+        throw new Error(json?.error ?? "Failed to create class");
     }
-    return json.data as ClassCard[];
+    return json.data as ClassCard;
 }
 
 export async function deleteClass(id: string): Promise<ClassCard[]> {
@@ -46,5 +59,5 @@ export function findClassByJoinCode(
     classes: ClassCard[],
     code: string,
 ): ClassCard | undefined {
-    return classes.find((c) => c.join_code === code);
+    return classes.find((c) => c.joinCode === code);
 }

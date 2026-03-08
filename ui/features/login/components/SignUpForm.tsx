@@ -12,10 +12,13 @@ const initialState = {
   password: '',
   confirmPassword: '',
   gender: '',
-  profilePictureUrl: '',
 };
 
+import { useRouter } from 'next/navigation';
+import GoogleOAuthButton from './GoogleOAuthButton';
+
 export default function SignUpForm({ onSuccess }: SignUpFormProps) {
+  const router = useRouter();
   const [form, setForm] = useState(initialState);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +46,6 @@ export default function SignUpForm({ onSuccess }: SignUpFormProps) {
     if (!validate()) return;
     setLoading(true);
     try {
-      // Build payload matching API
       const payload = {
         firstName: form.firstName,
         lastName: form.lastName,
@@ -51,9 +53,7 @@ export default function SignUpForm({ onSuccess }: SignUpFormProps) {
         password: form.password,
         confirmPassword: form.confirmPassword,
         gender: form.gender,
-        profilePictureUrl: form.profilePictureUrl,
       };
-
       const res = await fetch('https://api.domrov.app/auth/sign-up', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -64,6 +64,8 @@ export default function SignUpForm({ onSuccess }: SignUpFormProps) {
         throw new Error(text || 'Signup failed');
       }
       if (onSuccess) onSuccess();
+      // Redirect to sign-in page after successful registration
+      router.push('/login');
     } catch (err: any) {
       setError(err.message || 'Error');
     } finally {
@@ -72,60 +74,68 @@ export default function SignUpForm({ onSuccess }: SignUpFormProps) {
   };
 
   return (
-    <div style={pageStyle}>
-      <aside style={leftPanelStyle}>
-        <div style={sideLogoStyle}>DOMROV</div>
-      </aside>
+    <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="flex flex-col md:flex-row shadow-xl rounded-lg overflow-hidden w-full max-w-3xl">
+        {/* Left Panel */}
+        <aside className="text-white flex items-center justify-center md:w-80 w-full h-96 md:h-auto" style={{backgroundColor: '#0b0b3a'}}>
+          <div className="text-3xl font-extrabold tracking-wider">DOMROV</div>
+        </aside>
 
-      <main style={mainStyle}>
-        <div style={cardStyle}>
-          <form onSubmit={handleSubmit} style={formStyle}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-              <div style={fieldWrapStyle}>
-                <label style={labelStyle}>Last Name</label>
-                <input name="lastName" placeholder="Last Name" value={form.lastName} onChange={handleChange} required style={inputStyle} />
+        {/* Form Card */}
+        <main className="flex-1 flex items-center justify-center bg-white">
+          <div className="w-full max-w-md p-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col">
+                  <label className="text-xs text-gray-600 mb-1">Last Name</label>
+                  <input name="lastName" placeholder="Last Name" value={form.lastName} onChange={handleChange} required className="rounded-lg border border-gray-200 px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style={{color:'#222'}} />
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-xs text-gray-600 mb-1">First Name</label>
+                  <input name="firstName" placeholder="First Name" value={form.firstName} onChange={handleChange} required className="rounded-lg border border-gray-200 px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style={{color:'#222'}} />
+                </div>
               </div>
-              <div style={fieldWrapStyle}>
-                <label style={labelStyle}>First Name</label>
-                <input name="firstName" placeholder="First Name" value={form.firstName} onChange={handleChange} required style={inputStyle} />
+
+              <div className="flex flex-col">
+                <label className="text-xs text-gray-600 mb-1">Gender</label>
+                <input name="gender" placeholder="Male / Female" value={form.gender} onChange={handleChange} className="rounded-lg border border-gray-200 px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style={{color:'#222'}} />
               </div>
-            </div>
 
-            <div style={fieldWrapStyle}>
-              <label style={labelStyle}>Gender</label>
-              <input name="gender" placeholder="Male / Female" value={form.gender} onChange={handleChange} style={inputStyle} />
-            </div>
-
-            <div style={fieldWrapStyle}>
-              <label style={labelStyle}>Email</label>
-              <input name="email" placeholder="you@example.com" value={form.email} onChange={handleChange} required type="email" style={inputStyle} />
-            </div>
-
-            <div style={fieldWrapStyle}>
-              <label style={labelStyle}>Profile Picture URL</label>
-              <input name="profilePictureUrl" placeholder="https://example.com/avatar.jpg" value={form.profilePictureUrl} onChange={handleChange} type="url" style={inputStyle} />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-              <div style={fieldWrapStyle}>
-                <label style={labelStyle}>Password</label>
-                <input name="password" placeholder="Password" value={form.password} onChange={handleChange} required type="password" style={inputStyle} />
+              <div className="flex flex-col">
+                <label className="text-xs text-gray-600 mb-1">Email</label>
+                <input name="email" placeholder="you@example.com" value={form.email} onChange={handleChange} required type="email" className="rounded-lg border border-gray-200 px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style={{color:'#222'}} />
               </div>
-              <div style={fieldWrapStyle}>
-                <label style={labelStyle}>Confirm Password</label>
-                <input name="confirmPassword" placeholder="Confirm Password" value={form.confirmPassword} onChange={handleChange} required type="password" style={inputStyle} />
+
+              {/* Profile picture input removed as requested */}
+
+              <div className="flex flex-col mt-2">
+                <label className="text-xs text-gray-600 mb-1">Password</label>
+                <input name="password" placeholder="Password" value={form.password} onChange={handleChange} required type="password" className="rounded-lg border border-gray-200 px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style={{color:'#222'}} />
               </div>
-            </div>
 
-            {error && <div style={{ color: '#cc3333', marginTop: 8 }}>{error}</div>}
+              <div className="flex flex-col mt-2">
+                <label className="text-xs text-gray-600 mb-1">Confirm Password</label>
+                <input name="confirmPassword" placeholder="Confirm Password" value={form.confirmPassword} onChange={handleChange} required type="password" className="rounded-lg border border-gray-200 px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-400 outline-none" style={{color:'#222'}} />
+              </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
-              <a href="/login" style={{ color: '#333', textDecoration: 'none' }}>← Back to login</a>
-              <button type="submit" disabled={loading} style={primaryButtonStyle}>{loading ? 'Saving...' : 'Next'}</button>
-            </div>
-          </form>
-        </div>
-      </main>
+              {error && <div className="text-red-600 text-sm mt-2">{error}</div>}
+
+              {/* Google Sign Up Button - moved above submit */}
+              <div className="mt-6 flex flex-col items-center">
+                <span className="text-xs text-gray-400 mb-2">or sign up with</span>
+                <GoogleOAuthButton redirectUrl="https://api.domrov.app/auth/google/login/" />
+              </div>
+
+              <div className="flex items-center justify-between mt-2">
+                <a href="/login" className="text-gray-500 hover:text-indigo-700 text-sm">← Back to login</a>
+                <button type="submit" disabled={loading} className="text-white px-6 py-2 rounded-full font-semibold shadow-md transition-all duration-150 disabled:opacity-50" style={{backgroundColor: '#0b0b3a', border: 'none'}}>
+                  {loading ? 'Saving...' : 'Next'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

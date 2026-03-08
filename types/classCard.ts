@@ -2,12 +2,25 @@ import type { Class } from "./class";
 
 export type Term = "All" | "Term1" | "Term2" | "Term3";
 
-export interface ClassCard extends Class {
-  id: string;
-  track: string;
-  term: Term;
-  accent: string;
-  gradient: string;
+export interface ClassOwner {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+export interface ClassCard {
+  id: number;
+  name: string;
+  description: string;
+  coverImageUrl?: string;
+  joinCode?: string;
+  status: string;
+  owner?: ClassOwner;
+  role?: string;
+  createdAt?: string;
+  accent?: string;
+  gradient?: string;
 }
 
 export interface CreateClassInput {
