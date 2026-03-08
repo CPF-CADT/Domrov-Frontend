@@ -42,7 +42,7 @@ export default function DashboardClient() {
 
   const handleDeleteClick = useCallback(
     (id: string) => {
-      const classToDelete = classList.find((c) => c.id === id);
+      const classToDelete = classList.find((c) => c.id.toString() === id);
       if (classToDelete) {
         setDeleteModalState({
           isOpen: true,

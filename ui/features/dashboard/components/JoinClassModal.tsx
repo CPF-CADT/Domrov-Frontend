@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { joinClassByCode } from "@/lib/api/classes";
 import Modal from "@/ui/design-system/primitives/Modal";
 import FormInput from "@/ui/design-system/primitives/FormInput";
 
@@ -18,15 +19,23 @@ export default function JoinClassModal({
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!code.trim()) {
       setError("Please enter a class code");
       return;
     }
-    onJoin(code.trim());
-    setCode("");
-    setError("");
+    try {
+      const result = await joinClassByCode(code.trim());
+      // Optionally, call onJoin with the code or result
+      onJoin(code.trim());
+      setCode("");
+      setError("");
+      onClose();
+      alert(`Joined class: ${result.className}`);
+    } catch (err: any) {
+      setError(err.message || "Failed to join class");
+    }
   };
 
   const handleClose = () => {

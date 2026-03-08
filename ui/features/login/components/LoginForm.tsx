@@ -49,7 +49,7 @@ export default function LoginForm() {
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) {
+      if (!res.status) {
         const errorData = await res.json().catch(() => ({}));
         throw new Error(
           errorData.message || "Login failed. Please check your credentials."
@@ -57,14 +57,16 @@ export default function LoginForm() {
       }
 
       const data = await res.json();
-      
-      // Validate response has required access_token
-      if (!data.access_token) {
+      console.log('Login response:', data);
+
+      // Extract token from data.data.accessToken
+      const token = data.data.accessToken;
+      if (!token) {
         throw new Error("Invalid response from server. Missing authentication token.");
       }
 
       // Store token
-      localStorage.setItem("authToken", data.access_token);
+      localStorage.setItem("authToken", token);
 
       router.push("/dashboard");
     } catch (err: any) {
@@ -128,6 +130,12 @@ export default function LoginForm() {
       <div className="space-y-3">
         <GoogleOAuthButton />
         <GitHubOAuthButton />
+      </div>
+
+      {/* Sign Up Link */}
+      <div className="mt-6 text-center">
+        <span className="text-sm text-slate-600">Don't have an account?</span>
+        <a href="/login/signup" className="ml-2 text-sm text-blue-700 hover:underline font-semibold">Sign Up</a>
       </div>
     </div>
   );

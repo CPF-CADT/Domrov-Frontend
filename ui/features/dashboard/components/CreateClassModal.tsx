@@ -7,9 +7,10 @@ import Avatar from "@/ui/design-system/primitives/Avatar";
 
 export interface CreateClassData {
   name: string;
+  description: string;
   group: string;
   generation: string;
-  status: "active" | "inactive" | "archived";
+  status: string;
 }
 
 interface CreateClassModalProps {
@@ -25,6 +26,7 @@ export default function CreateClassModal({
 }: CreateClassModalProps) {
   const [formData, setFormData] = useState<CreateClassData>({
     name: "",
+    description: "",
     group: "",
     generation: "",
     status: "active",
@@ -39,6 +41,9 @@ export default function CreateClassModal({
       newErrors.name = "Class name is required";
     } else if (formData.name.length < 3) {
       newErrors.name = "Class name must be at least 3 characters";
+    }
+    if (!formData.description.trim()) {
+      newErrors.description = "Description is required";
     }
     if (!formData.group.trim()) {
       newErrors.group = "Group is required";
@@ -55,10 +60,11 @@ export default function CreateClassModal({
     if (!validate()) return;
 
     onCreate({
-      ...formData,
       name: formData.name.trim(),
+      description: formData.description.trim(),
       group: formData.group.trim(),
       generation: formData.generation.trim(),
+      status: formData.status,
     });
 
     resetForm();
@@ -67,6 +73,7 @@ export default function CreateClassModal({
   const resetForm = () => {
     setFormData({
       name: "",
+      description: "",
       group: "",
       generation: "",
       status: "active",
@@ -122,11 +129,20 @@ export default function CreateClassModal({
           required
           value={formData.name}
           onChange={handleChange}
-          placeholder="e.g., Introduction to Programming"
+          placeholder="e.g., Advanced Web Development"
           error={errors.name}
           autoFocus
         />
-
+        <FormInput
+          id="description"
+          name="description"
+          label="Description"
+          required
+          value={formData.description}
+          onChange={handleChange}
+          placeholder="e.g., Learning about NestJS and React"
+          error={errors.description}
+        />
         <FormInput
           id="group"
           name="group"
@@ -134,10 +150,9 @@ export default function CreateClassModal({
           required
           value={formData.group}
           onChange={handleChange}
-          placeholder="e.g., Group A"
+          placeholder="e.g., WebDev"
           error={errors.group}
         />
-
         <FormInput
           id="generation"
           name="generation"
@@ -148,21 +163,14 @@ export default function CreateClassModal({
           placeholder="e.g., 2026"
           error={errors.generation}
         />
-
-        {/* Status */}
-        <div>
-          <label
-            htmlFor="status"
-            className="block text-sm font-medium text-slate-700 mb-1.5"
-          >
-            Status
-          </label>
+        <div className="mb-2">
+          <label htmlFor="status" className="block text-sm font-medium text-slate-700 mb-2">Status</label>
           <select
             id="status"
             name="status"
             value={formData.status}
             onChange={handleChange}
-            className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all bg-white"
+            className="w-full px-4 py-2 rounded-lg border border-slate-300 text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
           >
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
