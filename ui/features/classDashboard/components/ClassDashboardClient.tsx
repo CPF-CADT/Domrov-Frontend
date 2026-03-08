@@ -40,7 +40,7 @@ export default function ClassDashboardClient() {
   };
 
   return (
-    <>
+    <div className="flex w-full min-h-screen">
       {/* Class Sidebar (middle left) */}
       <ClassSidebar classId={classId} activeTab={activeTab} onTabChange={setActiveTab} />
 
@@ -56,6 +56,6 @@ export default function ClassDashboardClient() {
           </div>
         </main>
       </div>
-    </>
+    </div>
   );
 }
